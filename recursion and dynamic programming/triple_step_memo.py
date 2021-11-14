@@ -1,8 +1,8 @@
 import sys
 from timeit import default_timer as timer
 
-# O(3^n) time and space complexity
-def step(n):
+# O(n) time and space complexity
+def step(n, memo):
     # base case: complete path found
     if n == 0:
         return 1
@@ -10,8 +10,12 @@ def step(n):
     elif n < 0:
         return 0
     # combine subproblems
-    else:
-        return step(n-1) + step(n-2) + step(n-3)
+    # compute only if result hasn't been saved
+    elif len(memo) - 1 < n:
+        memo.append(step(n-1, memo) + step(n-2, memo) + step(n-3, memo))
+
+    # return saved result
+    return memo[n]
 
 if __name__ == "__main__":
     errmsg = 'please provide a non-negative integer'
@@ -23,7 +27,7 @@ if __name__ == "__main__":
             raise TypeError(errmsg)
 
         start = timer()
-        print(step(n))
+        print(step(n, [0, 1]))
         elapsed = timer() - start
         print(f'{elapsed * 1000} ms')
     except:
